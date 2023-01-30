@@ -1,0 +1,13 @@
+---
+### dot1x
+    - name: Configure radius client
+      routeros_command:
+        commands:
+          - /interface dot1x server add auth-types=mac-auth interface={{ item.name }} \
+            mac-auth-mode=mac-as-username-and-password \
+            radius-mac-format=xx:xx:xx:xx:xx:xx \
+            reject-vlan-id={{ global_dot1x_reject_vlan_id }}
+      when:
+        - dot1x_interface_name is defined
+        - global_dot1x_reject_vlan_id is defined
+      loop: "{{ dot1x_interface_name }}"

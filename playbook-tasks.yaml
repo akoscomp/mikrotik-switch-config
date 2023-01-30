@@ -1,0 +1,31 @@
+---
+- hosts: switches
+  gather_facts: no
+  
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+    ansible_network_os: community.network.routeros
+    ansible_port: {{ global_ssh_port }}
+    ansible_user: mikrotikuser
+
+  tasks:
+    - name: Include basic tasks
+      ansible.builtin.import_tasks:
+        file: tasks/basic.yaml
+      tags:
+        - basic
+        - switch
+
+    - name: Include once tasks
+      ansible.builtin.import_tasks:
+        file: tasks/once.yaml
+      tags:
+        - basic-once
+      when: tags is defined and tags == "basic-once"
+
+    - name: Include bridge tasks
+      ansible.builtin.import_tasks:
+        file: tasks/bridge.yaml
+      tags:
+        - bridge
+        - switch

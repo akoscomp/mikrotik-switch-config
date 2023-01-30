@@ -1,0 +1,75 @@
+---
+### Debug
+    - name: debug info
+      debug:
+        var: host_vlans
+      tags:
+        - debug
+
+  ### VLANS
+    - name: Add bridge
+      community.routeros.command:
+        commands:
+          - /interface bridge add frame-types=admit-only-vlan-tagged ingress-filtering=yes name={{ group_bridge_name }} vlan-filtering=yes
+
+    - name: Create vlans group_vlans
+      community.routeros.command:
+        commands:
+          - /interface bridge vlan add bridge={{ group_bridge_name }} \
+            comment={{ item.name }} \
+            vlan-ids={{ item.vlan_id }}
+      when:
+        - group_vlans is defined
+      loop: "{{ group_vlans }}"
+
+    - name: Set tagged ports to group_vlans
+      community.routeros.command:
+        commands:
+          - /interface bridge vlan set \
+            [find vlan-ids={{ item.vlan_id }}] \
+            tagged={{ item.tagged }}
+      when:
+        - group_vlans is defined
+      loop: "{{ group_vlans }}"
+
+    - name: Create vlans host_vlans
+      community.routeros.command:
+        commands:
+          - /interface bridge vlan add bridge={{ group_bridge_name }} \
+            comment={{ item.name }} \
+            vlan-ids={{ item.vlan_id }}
+      when:
+        - host_vlans is defined
+      loop: "{{ host_vlans }}"
+
+    - name: Set tagged ports to host_vlans
+      community.routeros.command:
+        commands:
+          - /interface bridge vlan set \
+            [find vlan-ids={{ item.vlan_id }}] \
+            tagged={{ item.tagged }} \
+            comment={{ item.name }}
+      when:
+        - host_vlans is defined
+      loop: "{{ host_vlans }}"
+
+    - name: Add untagged ports from host_ports
+      community.routeros.command:
+        commands:
+          - /interface bridge port add bridge={{ group_bridge_name }} \
+            interface={{ item.interface_name }}
+      when:
+        - host_ports is defined
+      loop: "{{ host_ports }}"
+
+    - name: Set untagged port parameters from host_ports
+      community.routeros.command:
+        commands:
+          - /interface bridge port set \
+            [find interface={{ item.interface_name }}] \
+            frame-types={{ item.frame_types | default("admit-only-untagged-and-priority-tagged") }} \
+            pvid={{ item.vlan_id }} \
+            comment={{ item.comment | default ("") }}
+      when:
+        - host_ports is defined
+      loop: "{{ host_ports }}"

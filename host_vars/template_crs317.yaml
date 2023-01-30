@@ -1,0 +1,9 @@
+# https://mikrotik.com/product/crs317_1g_16s_rm
+host_mgmt_interface: ether1
+host_uplink_port: sfp-sfpplus1
+
+#host_vlans:
+  # example
+  # - name:    "{{ global_vlan_list.v1225.name }}"
+  #   vlan_id: "{{ global_vlan_list.v1225.id }}"
+  #   tagged:  "{{ host_uplink_port}},ether22,ether1" # list tagged ports

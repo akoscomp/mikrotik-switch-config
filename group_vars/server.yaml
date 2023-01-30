@@ -1,0 +1,7 @@
+### group_vlans is overwrited by host_vlans
+
+### Vlans for server switch
+#group_vlans:
+#  - name: test-group-vlan
+#    vlan_id: 3999
+#    tagged: "ether15,ether16,ether23"

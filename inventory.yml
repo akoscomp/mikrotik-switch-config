@@ -1,0 +1,33 @@
+# Groups docs: https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html
+---
+all:
+#  vars:
+#    ansible_connection: ansible.netcommon.network_cli
+#    ansible_network_os: community.network.routeros
+
+  children:
+    routers:
+      hosts:
+        ro001:
+          vars:
+            ansible_host: 10.0.0.1
+
+        ro002:
+          ansible_host: 10.0.0.2
+
+    switches:
+     children:
+      access:
+      core:
+        hosts:
+          sw001:
+            ansible_host: 10.0.0.11
+          sw002:
+            ansible_host: 10.0.0.12
+      poe:
+      server:
+        hosts:
+          sw003:
+            ansible_host: 10.0.0.13
+          sw004:
+            ansible_host: 10.0.0.14

@@ -1,0 +1,23 @@
+---
+### LOGS
+    - name: Configure logs
+      routeros_command:
+        commands:
+          - /system logging action set 3 remote={{ global_log_server_ip }} remote-port={{ global_log_server_port }}
+          - /system logging add action=remote topics=info 
+          - /system logging add action=remote topics=critical
+          - /system logging add action=remote topics=error
+          - /system logging add action=remote topics=warning
+      when:
+        - global_log_server_ip is defined
+
+### RADIUS
+    - name: Configure radius client
+      routeros_command:
+        commands:
+          - /user group add name=nothing
+          - /user aaa set default-group=nothing use-radius=yes
+          - /radius add address={{ group_radius_ip }} secret={{ group_radius_password }} service=login,dot1x timeout=3s
+      when:
+        - group_radius_ip is defined
+        - group_radius_password is defined

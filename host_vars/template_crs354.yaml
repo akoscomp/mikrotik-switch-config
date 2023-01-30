@@ -1,0 +1,8 @@
+# https://mikrotik.com/product/crs354_48g_4splus2qplusrm
+host_mgmt_interface: ether49
+host_uplink_port: sfp-sfpplus1
+
+#host_vlans:
+  # - name:    "{{ global_vlan_list.v1225.name }}"
+  #   vlan_id: "{{ global_vlan_list.v1225.id }}"
+  #   tagged: ""
