@@ -1,5 +1,8 @@
 # Ansible Mikrotik config playbook
 
+## About
+I want to make a simple solution to configure vlans on mikrotik switches.
+
 ## Basic configuration:
 * set ip address
 * set default gw
