@@ -1,24 +1,2 @@
 ### Uncomment to enable, disabled variables keep all default
-
-### Set winbox and ssh access IP range, default: allow from all
-# global_ssh_winbox_access: 10.0.0.0/24
-
-# global_dns_server: 
-
-# global_timezone: Europe/Bucharest
-
-### NTP server ip address
-# global_ntp_server: 
-
 global_ssh_port: 22
-
-# global_winbox_port: 8291
-
-# global_dot1x_reject_vlan_id: 
-
-# global_log_server_ip: 
-# global_log_server_port: 
-
-### Defined as group variable, prefered to defined/overwrite on group level
-# group_snmp_contact: 
-# group_snmp_location: 

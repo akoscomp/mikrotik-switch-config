@@ -3,7 +3,7 @@ host_mgmt_interface: ether1
 host_uplink_port: sfp-sfpplus1
 
 interfaces:
-  access: ""
-  wifi: ""
-  core: ""
+  access: ether17,ether18
+  wifi: ether19
+  core: ether20
   

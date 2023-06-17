@@ -6,70 +6,50 @@
       tags:
         - debug
 
+    - name: Add bridge
+      debug:
+        msg: "/interface bridge add frame-types=admit-only-vlan-tagged ingress-filtering=yes name={{ group_bridge_name }} vlan-filtering=yes"
+      tags:
+        - debug
+
+    - name: Create/update vlan
+      debug:
+        msg:
+          - /interface bridge vlan add bridge={{ group_bridge_name }} \
+              vlan-ids={{ item.value.id }} \
+              tagged={{ item.value.type | select('match', interfaces | join('|')) | map('extract', interfaces) | flatten | join(',') }} \
+              comment={{ item.value.name }}
+          - /interface bridge vlan set \
+              [find vlan-ids={{ item.value.id }}] \
+              tagged={{ item.value.type | select('match', interfaces | join('|')) | map('extract', interfaces) | flatten | join(',') }} \
+              comment={{ item.value.comment | default (item.value.name) }}
+      with_dict: "{{ global_vlan_list }}"
+      when:
+        - host_vlans is not defined
+        - item.value.type is defined
+        - item.value.type | select('match', interfaces | join('|')) | map('extract', interfaces) | flatten
+      tags:
+        - debug
+
   ### VLANS
     - name: Add bridge
       community.routeros.command:
         commands:
           - /interface bridge add frame-types=admit-only-vlan-tagged ingress-filtering=yes name={{ group_bridge_name }} vlan-filtering=yes
 
-    - name: Create vlans group_vlans
+    - name: Create/update vlan
       community.routeros.command:
         commands:
           - /interface bridge vlan add bridge={{ group_bridge_name }} \
-            comment={{ item.name }} \
-            vlan-ids={{ item.vlan_id }}
-      when:
-        - group_vlans is defined
-      loop: "{{ group_vlans }}"
-
-    - name: Set tagged ports to group_vlans
-      community.routeros.command:
-        commands:
+              vlan-ids={{ item.value.id }} \
+              tagged={{ item.value.type | select('match', interfaces | join('|')) | map('extract', interfaces) | flatten | join(',') }} \
+              comment={{ item.value.name }}
           - /interface bridge vlan set \
-            [find vlan-ids={{ item.vlan_id }}] \
-            tagged={{ item.tagged }}
+              [find vlan-ids={{ item.value.id }}] \
+              tagged={{ item.value.type | select('match', interfaces | join('|')) | map('extract', interfaces) | flatten | join(',') }} \
+              comment={{ item.value.comment | default (item.value.name) }}
+      with_dict: "{{ global_vlan_list }}"
       when:
-        - group_vlans is defined
-      loop: "{{ group_vlans }}"
-
-    - name: Create vlans host_vlans
-      community.routeros.command:
-        commands:
-          - /interface bridge vlan add bridge={{ group_bridge_name }} \
-            comment={{ item.name }} \
-            vlan-ids={{ item.vlan_id }}
-      when:
-        - host_vlans is defined
-      loop: "{{ host_vlans }}"
-
-    - name: Set tagged ports to host_vlans
-      community.routeros.command:
-        commands:
-          - /interface bridge vlan set \
-            [find vlan-ids={{ item.vlan_id }}] \
-            tagged={{ item.tagged }} \
-            comment={{ item.name }}
-      when:
-        - host_vlans is defined
-      loop: "{{ host_vlans }}"
-
-    - name: Add untagged ports from host_ports
-      community.routeros.command:
-        commands:
-          - /interface bridge port add bridge={{ group_bridge_name }} \
-            interface={{ item.interface_name }}
-      when:
-        - host_ports is defined
-      loop: "{{ host_ports }}"
-
-    - name: Set untagged port parameters from host_ports
-      community.routeros.command:
-        commands:
-          - /interface bridge port set \
-            [find interface={{ item.interface_name }}] \
-            frame-types={{ item.frame_types | default("admit-only-untagged-and-priority-tagged") }} \
-            pvid={{ item.vlan_id }} \
-            comment={{ item.comment | default ("") }}
-      when:
-        - host_ports is defined
-      loop: "{{ host_ports }}"
+        - host_vlans is not defined
+        - item.value.type is defined
+        - item.value.type | select('match', interfaces | join('|')) | map('extract', interfaces) | flatten

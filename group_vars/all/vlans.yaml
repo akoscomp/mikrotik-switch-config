@@ -1,8 +1,29 @@
 ---
 global_vlan_list:
   v0101:
-    id: 101
-    name: vlan101
-  v0102:
-    id: 102
-    name: vlan102
+    id: 3101
+    name: vlan3101
+    type:
+      - access
+      - core
+  v03102:
+    id: 3102
+    name: vlan3102
+    type:
+      - access
+  v03103:
+    id: 3103
+    name: vlan3103
+    type:
+      - core
+  v03104:
+    id: 3104
+    name: vlan3104
+    type:
+      - core
+      - wifi
+  v03105:
+    id: 3105
+    name: vlan3105
+    type:
+      - wifi
